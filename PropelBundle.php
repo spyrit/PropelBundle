@@ -38,6 +38,8 @@ class PropelBundle extends Bundle
             }
         } catch( \Exception $e ) {
         }
+
+        $this->importDatabaseLoaderScript();
     }
 
     /**
@@ -85,6 +87,22 @@ class PropelBundle extends Bundle
             $serviceContainer->setAdapterClass($name, $config['adapter']);
             $serviceContainer->setConnectionManager($name, $manager);
         }
+    }
+
+    protected function importDatabaseLoaderScript(): bool
+    {
+        $config = $this->container->getParameter('propel.configuration');
+        if(!$config['usesDatabaseLoaderScript']) {
+            return false;
+        }
+        $scriptDir = $config['paths']['loaderScriptDir'];
+        $scriptPath = $scriptDir . '/loadDatabase.php';
+        if(!file_exists($scriptPath)) {
+            throw new \Exception("Database loader script missing at $scriptPath. Please create the file by running propel:model:build");
+        }
+        require_once $scriptPath;
+
+        return true;
     }
 
     protected function configureLogging()

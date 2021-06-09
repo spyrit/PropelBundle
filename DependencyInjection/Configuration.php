@@ -37,6 +37,7 @@ class Configuration extends PropelConfiguration
                         ->scalarNode('schemaDir')->defaultValue($this->defaultDir)->end()
                         ->scalarNode('sqlDir')->defaultValue($this->defaultDir.'/sql')->end()
                         ->scalarNode('migrationDir')->defaultValue($this->defaultDir.'/migrations')->end()
+                        ->scalarNode('loaderScriptDir')->defaultValue($this->defaultDir.'/loader')->end()
                         ->scalarNode('composerDir')->defaultNull()->end()
                     ->end()
                 ->end()

@@ -10,6 +10,7 @@
 
 namespace Propel\Bundle\PropelBundle\DependencyInjection;
 
+use Propel\Runtime\ServiceContainer\StandardServiceContainer;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -45,6 +46,7 @@ class PropelExtension extends Extension
                 $config['generator']['defaultConnection'] = $defaultConnection;
             }
         }
+        $config['usesDatabaseLoaderScript'] = $this->usesDatabaseLoaderScript();
 
         $container->setParameter('propel.logging', $config['runtime']['logging']);
         $container->setParameter('propel.configuration', $config);
@@ -91,5 +93,11 @@ class PropelExtension extends Extension
     public function getAlias()
     {
         return 'propel';
+    }
+
+    public function usesDatabaseLoaderScript(): bool
+    {
+        return (defined(StandardServiceContainer::class . '::CONFIGURATION_VERSION')
+            && StandardServiceContainer::CONFIGURATION_VERSION >= 2);
     }
 }

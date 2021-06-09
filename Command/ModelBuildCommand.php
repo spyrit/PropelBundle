@@ -50,10 +50,14 @@ class ModelBuildCommand extends WrappedCommand
      */
     protected function getSubCommandArguments(InputInterface $input)
     {
-        $outputDir = $this->getApplication()->getKernel()->getProjectDir().'/';
+        $arguments = [];
+        $arguments['--output-dir'] = $this->getApplication()->getKernel()->getProjectDir().'/';
 
-        return array(
-            '--output-dir' => $outputDir,
-        );
+        $config = $this->getContainer()->getParameter('propel.configuration');
+        if($config['usesDatabaseLoaderScript']) {
+            $arguments['--loader-script-dir'] = $config['paths']['loaderScriptDir'];
+        }
+
+        return $arguments;
     }
 }
