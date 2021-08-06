@@ -123,6 +123,16 @@ class ModelType extends AbstractType
             $builder
                 ->addViewTransformer(new CollectionToArrayTransformer(), true)
             ;
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                if ('' === $data) {
+                    $emptyData = $form->getConfig()->getEmptyData();
+                    $data = $emptyData instanceof \Closure ? $emptyData($form, $data) : $emptyData;
+                }
+                $event->setData($data);
+            }, 1024);
         }
     }
 
