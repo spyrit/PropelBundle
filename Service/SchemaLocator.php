@@ -37,10 +37,13 @@ class SchemaLocator
 
         $schemas = $this->locateFromBundles($bundles);
 
-        $path = $this->configuration['paths']['schemaDir'].'/schema.xml';
-        if (file_exists($path)) {
-            $schema = new \SplFileInfo($path);
-            $schemas[(string) $schema] = array(null, $schema);
+        $finder  = new Finder();
+        $iterator = $finder->files()->name('*schema.xml')->followLinks()->in($this->configuration['paths']['schemaDir']);
+
+        if (iterator_count($iterator)) {
+            foreach ($iterator as $schema) {
+                $schemas[(string) $schema] = array(null, $schema);
+            }
         }
 
         return $schemas;

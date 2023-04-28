@@ -20,6 +20,8 @@ use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\ChoiceList\Factory\DefaultChoiceListFactory;
 use Symfony\Component\Form\ChoiceList\Factory\PropertyAccessDecorator;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -123,6 +125,16 @@ class ModelType extends AbstractType
             $builder
                 ->addViewTransformer(new CollectionToArrayTransformer(), true)
             ;
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event) {
+                $form = $event->getForm();
+                $data = $event->getData();
+
+                if ('' === $data) {
+                    $emptyData = $form->getConfig()->getEmptyData();
+                    $data = $emptyData instanceof \Closure ? $emptyData($form, $data) : $emptyData;
+                }
+                $event->setData($data);
+            }, 1024);
         }
     }
 
